@@ -1,1 +1,18 @@
-change is mades
+// Description: This file implements the initialization of an external
+// switch.
+//----------------------------------------------------------------------//
+
+#include "switch.h"
+#include <avr/io.h>
+
+/*
+ * Initializes pull-up resistor on PB3 and sets it into input mode
+ * Pin 22
+ */
+void initSwitchPB3(){
+    PCICR |= (1 << PCIE0); // enable PCINT 0 - 7
+    PCMSK0 |= (1 << PCINT3); // enable PCIN
+    // Set switch 50 as pull-up enabled input
+    PORTB |= (1 << PORTB3);
+    DDRB &= ~(1 << DDB3);
+}
