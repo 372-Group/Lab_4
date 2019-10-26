@@ -32,9 +32,33 @@ void initADC(){
     PORTA |= (1 << PORTA0);
     DDRA &= ~(1 << DDA0);
 
+    /* Special Function Registers
+     * ADMUX
+     * ADCSRA
+     * ADCSRB
+     * ADCH
+     * ADCL
+     * DIDR0
+     * DIDR2
+     * */
+
+
     //ADLAR determines how the 10-bit result is stored.
     //set ADLAR to 0.
     ADCSRA &= ~(1 << ADLAR);
+
+    /*REFS refers to reference voltage that is used. In our case we will be using
+     * VCC which is 5 volts. It is because of this that I believe we should use 'b01 for 
+     * REFS [1:0]*/
+    ADMUX &= ~(1 << REFS1);
+    ADMUX |= (1 << REFS0);
+
+    /*This is to turn on the ADC, this is usually the last thing to be done. 
+     * So maybe put this at the bottom of the function.*/
+    ADCSRA |=(1 << ADEN);
+
+    /*This is to start the conversion process. 
+    */
 
     //read from ADCL first and then read from ADCH
     //right justified
