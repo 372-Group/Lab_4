@@ -17,6 +17,7 @@
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
+
 typedef enum stateType{
   wait_press, wait_release, debounce_press, debounce_release
 } stateType;
@@ -26,9 +27,23 @@ int On = 1;
 volatile stateType state = wait_press;
 
 int main(){
+  /* for ADC */
+  initADC();
+  Serial.begin(9600);
+  unsigned int result = 0;
+  float voltage = 0;
+
   int test = 1;
 
   while(1){
+    // print out ADC value
+	  // read in ADCL first then read ADCH
+      result = ADCL;
+      result += ((unsigned int) ADCH) << 8;
+      voltage = result * (4.72/1024.0);
+      Serial.println(voltage);
+
+
       switch(state){
         case wait_press:
 
