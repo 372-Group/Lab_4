@@ -17,11 +17,11 @@
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
-typedef enum stateType_enum{
-  //wait_press, debounce_press, wait_release, debounce_release
-  wait_press, wait_release
+typedef enum stateType{
+  wait_press, wait_release, debounce_press, debounce_release
 } stateType;
 
+int On = 1;
 //initializing state
 volatile stateType state = wait_press;
 
@@ -30,13 +30,17 @@ int main(){
 
   while(1){
       switch(state){
-        case wait_press: //flip = 2
-          //delayMs(SHORT_DELAY);
-          //turnOnLEDWithChar(i);
+        case wait_press:
+
         break;
-        case wait_release: //flip = 1
-          //delayMs(LONG_DELAY);
-          //turnOnLEDWithChar(i);
+        case debounce_press:
+        delayUs(SHORT_DELAY);
+        break;
+        case wait_release:
+
+        break;
+        case debounce_release:
+        delayUs(SHORT_DELAY);
         break;
       }
   }
@@ -51,11 +55,17 @@ ISR(PCINT0_vect){
   //use this function for the PCINT0 flag when it goes up
   //handle the switch press
   if(state == wait_press){
-    state = wait_release;
-    delayUs(LONG_DELAY);
+    state = debounce_press;
+    delayUs(SHORT_DELAY);
   }
-  else{
-    state = wait_press;
+  else if(state == wait_release){
+    if(On){
+      On = 0;
+    }
+    else{
+      On = 1;
+    }
+    state = debounce_release;
     delayUs(SHORT_DELAY);
   }
 }
