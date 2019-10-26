@@ -7,27 +7,37 @@
 // program. It should never contain assignments to special function registers
 // for the exception key one-line code such as checking the state of the pin.
 //
-
+#include <Arduino.h>
+#include <avr/io.h>
+#include "adc.h"
+#include "switch.h"
+#include "timer.h"
+#define SHORT_DELAY 100
+#define LONG_DELAY 200
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
-typedef enum{
-    WAIT_PRESS,
-    WAIT_RELEASE
-} states;
+typedef enum stateType_enum{
+  //wait_press, debounce_press, wait_release, debounce_release
+  wait_press, wait_release
+} stateType;
 
-volatile states state = WAIT_PRESS;
+//initializing state
+volatile stateType state = wait_press;
 
 int main(){
   int test = 1;
 
   while(1){
       switch(state){
-          case WAIT_PRESS:
-              break;
-          case WAIT_RELEASE:
-
-              break;
+        case wait_press: //flip = 2
+          //delayMs(SHORT_DELAY);
+          //turnOnLEDWithChar(i);
+        break;
+        case wait_release: //flip = 1
+          //delayMs(LONG_DELAY);
+          //turnOnLEDWithChar(i);
+        break;
       }
   }
 
@@ -38,17 +48,15 @@ int main(){
  * which it currently does not do
  */
 ISR(PCINT0_vect){
-    if(state == WAIT_PRESS){
-        state = WAIT_RELEASE;
-    }
-    else if( state == WAIT_RELEASE ){
-        state = WAIT_PRESS;
-        if( initial_delay == 200){
-            initial_delay = 100;
-        }
-        else{
-            initial_delay = 200;
-        }
-        delayMs(initial_delay);
-    }
+  //use this function for the PCINT0 flag when it goes up
+  //handle the switch press
+  if(state == wait_press){
+    state = wait_release;
+    delayMs(LONG_DELAY);
+  }
+  else{
+    state = wait_press;
+    delayMs(SHORT_DELAY);
+  }
 }
+
