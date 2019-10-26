@@ -17,7 +17,7 @@ select the auto-trigger source
 - Choose to enable or disable ADC interrupt using ADCSRA bit 3. 
     If enabled, you will alos need to enable Global interrupt in order for the ADC Interrupt to be acted upon
     (SREG |= (1 << SREG_l);). You will also need an ISR to service the interrupt <=""="">
-- Choose the clock prescaller using ADCSRA bits 2-0
+- Choose the clock prescaler using ADCSRA bits 2-0
 - Turn on the ADC using ADCSRA bit 7:
     1 to turn on; 0 to turn off.
 2. start a Conversion: 
@@ -29,39 +29,34 @@ or by checking bit 4 of ADCSRA (conversion is complete when this bit is 1)
 
 // initSwitch returns void and takes no parameters
 void initADC(){
-    // Set switch 22 as pull-up enabled input (Pin A0)
-    PORTA |= (1 << PORTA0);
-    DDRA &= ~(1 << DDA0);
-
-    /* Special Function Registers
-     * ADMUX
-     * ADCSRA
-     * ADCSRB
-     * ADCH
-     * ADCL
-     * DIDR0
-     * DIDR2
-     * */
-
-
-    //ADLAR determines how the 10-bit result is stored.
-    //set ADLAR to 0.
-    ADCSRA &= ~(1 << ADLAR);
-
-    /*REFS refers to reference voltage that is used. In our case we will be using
-     * VCC which is 5 volts. It is because of this that I believe we should use 'b01 for 
-     * REFS [1:0]*/
-    ADMUX &= ~(1 << REFS1);
+    // set voltage references to be AVCC. datasheet page 281
     ADMUX |= (1 << REFS0);
+    ADMUX &= ~(1 << REFS1);
 
-    /*This is to turn on the ADC, this is usually the last thing to be done. 
-     * So maybe put this at the bottom of the function.*/
-    ADCSRA |=(1 << ADEN);
+    // ADLAR = 0 (RIGHT JUSTIFIED)
+    ADMUX &= ~(1 << ADLAR);
 
-    /*This is to start the conversion process. 
-    */
+   // Set ADC7 as single-ended input with MUX[5:0] = 0b000111
+   //datasheet page 282, table 26-4
+   ADMUX |= (1 << MUX2) | (1 << MUX1) | (1 << MUX0);
+   ADMUX &=  ~(1 << MUX4);
+   ADMUX &=  ~(1 << MUX3);
+   ADCSRB &= ~(1 << MUX5);
 
-    //read from ADCL first and then read from ADCH
-    //right justified
+   // set Auto Trigger Source Selection. datasheet page 287
+   // set to free-running mode ADTS[2:0] = 0b000
+   ADCSRB &= ~(1 << ADTS2 | 1 << ADTS1 | 1 << ADTS0);
 
+   // enable auto-triggering and turn-on ADC, datasheet page 285
+   ADCSRA |= (1 << ADATE) | (1 << ADEN);
+
+   // set the pre-scaler to 128, datasheet page 285
+   // ADC clock frequency is 16 Mhz divided by pre-scaler = 125KHz
+   ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+
+   // disable ADC0 pin digital input - pin A0 on board
+   DIDR0 |= (1 << ADC7D);
+
+   // start the first conversion
+   ADCSRA |= (1 << ADSC);
 }
