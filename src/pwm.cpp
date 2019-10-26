@@ -4,6 +4,10 @@
 #include "pwm.h"
 #include <avr/io.h>
 
+
+/* The changeDutyCycle will be changing the amount of
+ * voltage that is being sent. If we have 50% duty cycle in a 5v
+ * system, 2.5 will be sent out.*/
 void changeDutyCycle(){
 
 }
