@@ -7,7 +7,8 @@
 //a 8-level ADC has a bit-depth of 3. 
 //Arduino has a bit-depth of 10.
 
-/* 1. configure ADCSRA
+/* steps to set up the adc
+1. configure ADCSRA
 - Choose input channel, mode (single-ended or differential), and gain (if applicable) using ADMUX bits 3-0.
 - Choose VREF(AREF,AVCC, or internal 2.56 Vref) using ADMUX bits 7-6
 - Choose left or right alignment of conversion result in ADC Data Register using ADMUX bit 5
