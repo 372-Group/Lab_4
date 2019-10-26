@@ -17,9 +17,8 @@
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
-typedef enum stateType_enum{
-  //wait_press, debounce_press, wait_release, debounce_release
-  wait_press, wait_release
+typedef enum stateType{
+  wait_press, wait_release, debounce_press, debounce_release
 } stateType;
 
 //initializing state
@@ -37,6 +36,11 @@ int main(){
         case wait_release: //flip = 1
           //delayMs(LONG_DELAY);
           //turnOnLEDWithChar(i);
+        break;
+        case debounce_press:
+
+        break;
+        case debounce_release:
         break;
       }
   }
