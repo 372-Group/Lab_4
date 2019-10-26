@@ -52,11 +52,11 @@ ISR(PCINT0_vect){
   //handle the switch press
   if(state == wait_press){
     state = wait_release;
-    delayMs(LONG_DELAY);
+    delayUs(LONG_DELAY);
   }
   else{
     state = wait_press;
-    delayMs(SHORT_DELAY);
+    delayUs(SHORT_DELAY);
   }
 }
 
