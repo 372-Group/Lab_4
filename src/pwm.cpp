@@ -8,8 +8,14 @@
 /* The changeDutyCycle will be changing the amount of
  * voltage that is being sent. If we have 50% duty cycle in a 5v
  * system, 2.5 will be sent out.*/
-void changeDutyCycle(){
-
+void changeDutyCycle(double num){
+    if (num > 4.75){
+        num = 5;
+    }
+    float percent;
+    percent = num / 5;
+    OCR3A = percent * 1023;
+    OCR4A = (1 - percent) * 1023;
 }
 
 void initPWMTimer3(){
