@@ -59,6 +59,7 @@ void initADC(){
 
     /*This is to start the conversion process. 
     */
+    ADCSRA |=()
 
     //read from ADCL first and then read from ADCH
     //right justified
