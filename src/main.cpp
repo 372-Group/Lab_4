@@ -40,9 +40,9 @@ int main(){
 	  // read in ADCL first then read ADCH
       result = ADCL;
       result += ((unsigned int) ADCH) << 8;
-      voltage = result * (4.72/1024.0);
-      Serial.println(voltage);
-
+      voltage = result * (5.0/1023.0);
+      Serial.println(voltage*100);
+      //delayUs(1000);
 
       switch(state){
         case wait_press:
