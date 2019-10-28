@@ -13,7 +13,8 @@
 #include "switch.h"
 #include "timer.h"
 #include "pwm.h"
-#define LONG_DELAY 10000
+#include "pwm.cpp"
+#define LONG_DELAY 100000
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
@@ -47,12 +48,12 @@ int main(){
         case wait_press:
         break;
         case debounce_press:
-        delayUs(LONG_DELAY);
+        delayUs(100000);
         break;
         case wait_release:
         break;
         case debounce_release:
-        delayUs(LONG_DELAY);
+        delayUs(100000);
         break;
       }
   }
@@ -80,7 +81,7 @@ ISR(PCINT0_vect){
       initPWMTimer4();
     }
     state = debounce_release;
-    delayUs(LONG_DELAY);
+    delayUs(SHORT_DELAY);
   }
 }
 
