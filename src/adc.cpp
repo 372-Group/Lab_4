@@ -56,6 +56,8 @@ void initADC(){
 
    // disable ADC0 pin digital input - pin A0 on board
    //DIDR0 |= (1 << ADC7D);
+   DIDR0 |= (1 << ADC0D);
+   
 
    // start the first conversion
    ADCSRA |= (1 << ADSC);

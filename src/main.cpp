@@ -29,10 +29,12 @@ int On = 1;
 volatile stateType state = wait_press;
 
 int main(){
-  /* for ADC */
+  initTimer1();   //timer for switch
   initADC();
   initPWMTimer3();
   initPWMTimer4();
+  sei();
+
   Serial.begin(9600);
   unsigned int result = 0;
   float voltage = 0;
@@ -43,6 +45,7 @@ int main(){
       result = ADCL;
       result += ((unsigned int) ADCH) << 8;
       voltage = result * (5.0/1023.0);
+      //voltage = result * (4.7/1024.0);
       Serial.println(voltage*100);
 
       switch(state){
@@ -69,7 +72,7 @@ ISR(PCINT0_vect){
   //use this function for the PCINT0 flag when it goes up
   //handle the switch press
   if(state == wait_press){
-    state = debounce_press;
+    state = debounce_press; //correct
   }
   else if(state == wait_release){
     if(On){
@@ -81,7 +84,7 @@ ISR(PCINT0_vect){
       initPWMTimer3();
       initPWMTimer4();
     }
-    state = debounce_release;
+    state = debounce_release; //correct
     delayUs(SHORT_DELAY);
   }
 }
