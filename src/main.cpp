@@ -12,6 +12,8 @@
 #include "adc.h"
 #include "switch.h"
 #include "timer.h"
+#include "pwm.h"
+#include "pwm.cpp"
 #define SHORT_DELAY 100
 #define LONG_DELAY 200
 /*
@@ -29,11 +31,11 @@ volatile stateType state = wait_press;
 int main(){
   /* for ADC */
   initADC();
+  initPWMTimer3();
+  initPWMTimer4();
   Serial.begin(9600);
   unsigned int result = 0;
   float voltage = 0;
-
-  int test = 1;
 
   while(1){
     // print out ADC value
@@ -42,20 +44,17 @@ int main(){
       result += ((unsigned int) ADCH) << 8;
       voltage = result * (5.0/1023.0);
       Serial.println(voltage*100);
-      //delayUs(1000);
 
       switch(state){
         case wait_press:
-
         break;
         case debounce_press:
-        delayUs(SHORT_DELAY);
+        delayUs(100000);
         break;
         case wait_release:
-
         break;
         case debounce_release:
-        delayUs(SHORT_DELAY);
+        delayUs(100000);
         break;
       }
   }
@@ -71,14 +70,16 @@ ISR(PCINT0_vect){
   //handle the switch press
   if(state == wait_press){
     state = debounce_press;
-    delayUs(SHORT_DELAY);
   }
   else if(state == wait_release){
     if(On){
       On = 0;
+      turnOff();
     }
     else{
       On = 1;
+      initPWMTimer3();
+      initPWMTimer4();
     }
     state = debounce_release;
     delayUs(SHORT_DELAY);

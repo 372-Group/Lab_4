@@ -18,6 +18,12 @@ void changeDutyCycle(double num){
     OCR4A = (1 - percent) * 1023;
 }
 
+/*Turns off both motors*/
+void turnOff(){
+    OCR3A = 0;
+    OCR4A = 0;
+}
+
 void initPWMTimer3(){
     DDRE |= (1 << DDE3);
     TCCR3A |= (1 << WGM30) | (1 << WGM31) | (1 << COM3A1);

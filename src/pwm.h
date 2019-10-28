@@ -10,4 +10,5 @@
 void changeDutyCycle(double num);
 void initPWMTimer3();
 void initPWMTimer4();
+void turnOff();
 #endif
