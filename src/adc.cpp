@@ -36,9 +36,9 @@ void initADC(){
     // ADLAR = 0 (RIGHT JUSTIFIED)
     ADMUX &= ~(1 << ADLAR);
 
-   // Set ADC7 as single-ended input with MUX[5:0] = 0b000111
+   // Set ADC0 as single-ended input with MUX[5:0] = 0b000000
    //datasheet page 282, table 26-4
-   ADMUX |= (1 << MUX2) | (1 << MUX1) | (1 << MUX0);
+   ADMUX &= ~(1 << MUX2) | (1 << MUX1) | (1 << MUX0);
    ADMUX &=  ~(1 << MUX4);
    ADMUX &=  ~(1 << MUX3);
    ADCSRB &= ~(1 << MUX5);

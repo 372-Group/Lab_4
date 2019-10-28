@@ -29,20 +29,23 @@ volatile stateType state = wait_press;
 int main(){
   /* for ADC */
   initADC();
+  initTimer1();
+  initSwitchPB3();
   initPWMTimer3();
   initPWMTimer4();
+  sei();
   Serial.begin(9600);
   unsigned int result = 0;
   float voltage = 0;
 
   while(1){
-    // print out ADC value
-	  // read in ADCL first then read ADCH
-      result = ADCL;
-      result += ((unsigned int) ADCH) << 8;
-      voltage = result * (5.0/1023.0);
-      Serial.println(voltage*100);
-
+        // print out ADC value
+        // read in ADCL first then read ADCH
+        result = ADCL;
+        result += ((unsigned int) ADCH) << 8;
+        voltage = result * (5.0/1023.0);
+        Serial.println(voltage);
+        changeDutyCycle(voltage);
       switch(state){
         case wait_press:
         break;
@@ -80,7 +83,6 @@ ISR(PCINT0_vect){
       initPWMTimer4();
     }
     state = debounce_release;
-    delayUs(LONG_DELAY);
   }
 }
 

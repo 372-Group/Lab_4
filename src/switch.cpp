@@ -7,7 +7,7 @@
 
 /*
  * Initializes pull-up resistor on PB3 and sets it into input mode
- * Pin 22
+ * Pin 50
  */
 void initSwitchPB3(){
     PCICR |= (1 << PCIE0); // enable PCINT 0 - 7
