@@ -9,13 +9,16 @@
  * voltage that is being sent. If we have 50% duty cycle in a 5v
  * system, 2.5 will be sent out.*/
 void changeDutyCycle(double num){
-    if (num > 4.75){
-        num = 5;
+    if (num>2.00 && num<3.00){
+        OCR3A = 1023;
+        OCR4A = 1023;
     }
+    else{
     float percent;
     percent = num / 5;
     OCR3A = percent * 1023;
     OCR4A = (1 - percent) * 1023;
+    }
 }
 
 /*Turns off both motors*/
@@ -29,13 +32,13 @@ void initPWMTimer3(){
     TCCR3A |= (1 << WGM30) | (1 << WGM31) | (1 << COM3A1);
     TCCR3A &= ~(1 << COM3A0);
     TCCR3B |= (1 << WGM32) | (1 << CS30);
-    OCR3A = 255;
+    OCR3A = 1023;
 }
 
 void initPWMTimer4(){
-    DDRH |= (1 << DDH4);
+    DDRH |= (1 << DDH3);
     TCCR4A |= (1 << WGM40) | (1 << WGM41) | (1 << COM4A1);
     TCCR4A &= ~(1 << COM4A0);
     TCCR4B |= (1 << WGM42) | (1 << CS40);
-    OCR4A = 255;
+    OCR4A = 1023;
 }

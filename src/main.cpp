@@ -13,7 +13,7 @@
 #include "switch.h"
 #include "timer.h"
 #include "pwm.h"
-#define LONG_DELAY 10000
+#define LONG_DELAY 30000
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
@@ -22,7 +22,6 @@ typedef enum stateType{
   wait_press, wait_release, debounce_press, debounce_release
 } stateType;
 
-int On = 1;
 //initializing state
 volatile stateType state = wait_press;
 
@@ -37,25 +36,43 @@ int main(){
   Serial.begin(9600);
   unsigned int result = 0;
   float voltage = 0;
+  bool On = true;
 
   while(1){
         // print out ADC value
         // read in ADCL first then read ADCH
+        if(!On){
+          turnOff();
+          Serial.println(On);
+        }
+        else{
         result = ADCL;
         result += ((unsigned int) ADCH) << 8;
         voltage = result * (5.0/1023.0);
         Serial.println(voltage);
+        Serial.println(On);
         changeDutyCycle(voltage);
+        }
       switch(state){
-        case wait_press:
+      case wait_press:
+        delayUs(100000);
         break;
-        case debounce_press:
+      case debounce_press:
         delayUs(LONG_DELAY);
+        state = wait_release;
         break;
-        case wait_release:
+      case wait_release:
+        delayUs(100000);
         break;
-        case debounce_release:
+      case debounce_release:
         delayUs(LONG_DELAY);
+        if(On){
+          On = false;
+        }
+        else{
+          On = true;
+        }
+        state = wait_press;
         break;
       }
   }
@@ -73,15 +90,6 @@ ISR(PCINT0_vect){
     state = debounce_press;
   }
   else if(state == wait_release){
-    if(On){
-      On = 0;
-      turnOff();
-    }
-    else{
-      On = 1;
-      initPWMTimer3();
-      initPWMTimer4();
-    }
     state = debounce_release;
   }
 }
