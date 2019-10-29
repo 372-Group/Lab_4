@@ -24,6 +24,7 @@ typedef enum stateType{
 
 //initializing state
 volatile stateType state = wait_press;
+volatile bool button = true;
 
 int main(){
   /* for ADC */
@@ -33,16 +34,26 @@ int main(){
   initPWMTimer3();
   initPWMTimer4();
   sei();
-  Serial.begin(9600);
-  unsigned int result = 0;
-  float voltage = 0;
-  bool On = true;
+  //Serial.begin(9600);
+  //unsigned int result = 0;
+  //float voltage = 0;
+  //bool On = true;
 
+  //float dutyVolt3 = voltage/5;
+  //float dutyVolt4 = 1. - dutyVolt3;
+  //changeDutyCycle(dutyVolt3);
+  //changeDutyCycle(dutyVolt4);
+
+  int low = 0;
   while(1){
+  /*     
         // print out ADC value
         // read in ADCL first then read ADCH
         if(!On){
           turnOff();
+          //changeDutyCycle(dutyVolt3);
+          //changeDutyCycle(dutyVolt4);
+          //changeDutyCycle(voltage);
           Serial.println(On);
         }
         else{
@@ -53,6 +64,7 @@ int main(){
         Serial.println(On);
         changeDutyCycle(voltage);
         }
+
       switch(state){
       case wait_press:
         delayUs(100000);
@@ -74,8 +86,41 @@ int main(){
         }
         state = wait_press;
         break;
-      }
+      }*/
+    // Switch ISR
+    
+        switch(state)
+        {
+            case wait_press:
+                low = ADCL;
+                low += ((ADCH & 0x3) << 8);
+                //voltage = low * (5.0/1023.0);
+                //changeDutyCycle(voltage*100);
+                changeDutyCycle((int) low/1023.0 * 100.0);
+                break;
+
+            case debounce_press:
+                delayUs(1);
+                state = wait_release;
+                break;
+            
+            case wait_release:
+                low = 0;
+                OCR3A = 0;
+                OCR4A = 0;
+                break;
+            
+            case debounce_release:
+                delayUs(1);
+                state = wait_press;
+                break;
+           
+            default:
+                break;
+        }
+
   }
+
 
   return 0;
 }
@@ -90,6 +135,8 @@ ISR(PCINT0_vect){
     state = debounce_press;
   }
   else if(state == wait_release){
+    button = ~button;
+    Serial.println(button);
     state = debounce_release;
   }
 }

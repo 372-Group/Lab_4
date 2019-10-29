@@ -7,7 +7,8 @@
 #define PWM_H
 
 // initSwitch returns void and takes no parameters
-void changeDutyCycle(double num);
+//void changeDutyCycle(double num);
+void changeDutyCycle(int num);
 void initPWMTimer3();
 void initPWMTimer4();
 void turnOff();
